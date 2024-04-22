@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+</head>
+<body>
+    <h1>Welcome, {{ name }}!</h1>
+    <div id="messages">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    <form id="messageForm" onsubmit="sendMessage(); return false;">
+        <input type="hidden" id="name" name="name" value="{{ name }}">
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        function sendMessage() {
+            var name = document.getElementById('name').value;
+            var message = document.getElementById('message').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/send', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var messageDiv = document.createElement('div');
+                    messageDiv.textContent = xhr.responseText;
+                    document.getElementById('messages').appendChild(messageDiv);
+                }
+            };
+            xhr.send('name=' + encodeURIComponent(name) + '&message=' + encodeURIComponent(message));
+            document.getElementById('message').value = '';
+        }
+    </script>
+</body>
+</html>
