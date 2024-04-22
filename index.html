@@ -3,32 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Website Title</title>
-    <!-- Add any additional meta tags, stylesheets, or scripts here -->
+    <title>Chat Room</title>
 </head>
 <body>
-    <header>
-        <!-- Add your header content here -->
-        <h1>Welcome to Your Website</h1>
-    </header>
-
-    <nav>
-        <!-- Add your navigation menu here -->
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <!-- Add your main content here -->
-        <p>This is the main content of your website.</p>
-    </main>
-
-    <footer>
-        <!-- Add your footer content here -->
-        <p>&copy; 2024 Your Website Name. All rights reserved.</p>
-    </footer>
+    <h1>Welcome to the Chat Room</h1>
+    <form action="/join" method="POST">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="passcode">Passcode:</label>
+        <input type="text" id="passcode" name="passcode" required>
+        <button type="submit">Join Chat</button>
+    </form>
 </body>
 </html>
