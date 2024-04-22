@@ -1,4 +1,6 @@
-import threading
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
 
 class Server:
     def __init__(self, filename):
@@ -13,69 +15,33 @@ class Server:
             messages = file.readlines()
             return messages
 
-import threading
-
-class Server:
-    def __init__(self, filename):
-        self.filename = filename
-
-    def save_message(self, message):
-        with open(self.filename, 'a') as file:
-            file.write(message + '\n')
-
-    def retrieve_messages(self):
-        with open(self.filename, 'r') as file:
-            messages = file.readlines()
-            return messages
-
-class ChatRoom:
-    def __init__(self, passcode, server):
-        self.passcode = passcode
-        self.participants = []
-        self.server = server
-
-    def join_chat(self):
-        name = input("Enter your name: ")
-        user_passcode = input("Enter the passcode to join the chat room: ")
-        if user_passcode == self.passcode:
-            self.participants.append(name)
-            print(f"{name} joined the chat room.")
-            messages = self.server.retrieve_messages()
-            for message in messages:
-                print(message, end='')
-        else:
-            print("Incorrect passcode. Unable to join the chat room.")
-
-    def send_message(self):
-        name = input("Enter your name: ")
-        if name in self.participants:
-            message = input("Type your message (or `exit` to leave): ")
-            if message.lower() == 'exit':
-                return
-            message_to_save = f"{name}: {message}"
-            self.server.save_message(message_to_save)
-            print(message_to_save)
-        else:
-            print("You are not authorized to send messages.")
-
-    def run_chat(self):
-        while True:
-            self.join_chat()
-            while True:
-                self.send_message()
-
 filename = "messages.txt"
 server = Server(filename)
 passcode = "6633"
-chat_room = ChatRoom(passcode, server)
+participants = []
 
-# Running the chat room
-chat_room.run_chat()
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-filename = "messages.txt"
-server = Server(filename)
-passcode = "6633"
-chat_room = ChatRoom(passcode, server)
+@app.route('/join', methods=['POST'])
+def join_chat():
+    name = request.form['name']
+    user_passcode = request.form['passcode']
+    if user_passcode == passcode:
+        participants.append(name)
+        messages = server.retrieve_messages()
+        return render_template('chat.html', name=name, messages=messages)
+    else:
+        return "Incorrect passcode. Unable to join the chat room."
 
-# Running the chat room
-chat_room.run_chat()
+@app.route('/send', methods=['POST'])
+def send_message():
+    name = request.form['name']
+    message = request.form['message']
+    message_to_save = f"{name}: {message}"
+    server.save_message(message_to_save)
+    return message_to_save
+
+if __name__ == '__main__':
+    app.run(debug=True)
